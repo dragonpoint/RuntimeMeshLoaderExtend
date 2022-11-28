@@ -5,6 +5,7 @@ using System.IO;
 
 public class RuntimeMeshLoader : ModuleRules
 {
+
 	/**
 	 * 
 	 **/
@@ -37,15 +38,15 @@ public class RuntimeMeshLoader : ModuleRules
 
         PublicIncludePaths.AddRange(
 			new string[] {
-				"RuntimeMeshLoader/Public",
                 Path.Combine(ThirdPartyPath, "assimp/include")
+
 				// ... add public include paths required here ...
 			}
 		);
 
 		PrivateIncludePaths.AddRange(
 			new string[] {
-				"RuntimeMeshLoader/Private",
+                Path.Combine(ModuleDirectory, "Private"),
 				// ... add other private include paths required here ...
 			}
 			);
@@ -54,17 +55,17 @@ public class RuntimeMeshLoader : ModuleRules
 		PublicDependencyModuleNames.AddRange(
 				new string[]
 				{
-					"Core",
+                    "Core",
 					"CoreUObject",
 					"Engine",
 					"RHI",
 					"RenderCore",
-					"ProceduralMeshComponent",
 					"MeshDescription",
 					"StaticMeshDescription",
-					"Projects"
+					"Projects",
 					// ... add other public dependencies that you statically link with here ...
-				}
+					"ProceduralMeshComponent",
+                }
 			);
 
 
@@ -74,7 +75,8 @@ public class RuntimeMeshLoader : ModuleRules
 				"Slate",
 				"SlateCore",
 				// ... add private dependencies that you statically link with here ...	
-			}
+                
+            }
 			);
 		
 		
@@ -84,63 +86,14 @@ public class RuntimeMeshLoader : ModuleRules
             }
             );
 
-        if ((Target.Platform == UnrealTargetPlatform.Win64) || (Target.Platform == UnrealTargetPlatform.Win32))
-        {
-            string PlatformString = (Target.Platform == UnrealTargetPlatform.Win64) ? "Win64" : "Win32";
-			// R
-			string CompileMode = "Release"; 
+		if ((Target.Platform == UnrealTargetPlatform.Win64))
+		{
+            PublicAdditionalLibraries.Add(Path.Combine(ThirdPartyPath, "assimp\\lib\\x64\\Release", "assimp-vc141-mt.lib"));
 
-            string LibName = "assimp-vc141-mt";
-			string DLLName = "assimp-vc141-mt";
-
-			if ( Target.Configuration == UnrealTargetConfiguration.Debug ||
-				 Target.Configuration == UnrealTargetConfiguration.DebugGame ||
-				 Target.Configuration == UnrealTargetConfiguration.Development)
-			{
-				LibName += "d";
-				DLLName += "d";
-				CompileMode = "Debug";
-			}
-
-
-			string libpath = Path.Combine(ThirdPartyPath, "assimp", "lib", PlatformString, CompileMode, LibName + ".lib");
-			string dllpath = Path.Combine(ThirdPartyPath, "assimp", "bin", PlatformString, CompileMode, DLLName + ".dll");
-
-
-            PublicAdditionalLibraries.Add(libpath);
-			CopyToBinaries(dllpath, Target);
-
-			RuntimeDependencies.Add(new RuntimeDependency(dllpath));
-
-            System.Console.WriteLine(@"################## " + libpath);
-            System.Console.WriteLine(@"################## " + dllpath);
+            string Destination = Path.Combine("$(BinaryOutputDir)", "assimp-vc141-mt.dll");
+            string Source = Path.Combine(ThirdPartyPath, "assimp\\bin\\x64", "assimp-vc141-mt.dll");
+            RuntimeDependencies.Add(Destination, Source);
         }
-        else if(Target.Platform == UnrealTargetPlatform.Mac)
-		{
-			//string PlatformString =  "Mac";
-            //PublicAdditionalLibraries.Add(Path.Combine(ThirdPartyPath, "assimp", "lib", PlatformString, "libassimp.4.1.0.dylib"));
-		}
     }
 
-	/** 
-	 * 
-	 **/
-    private void CopyToBinaries(string Filepath, ReadOnlyTargetRules Target)
-    {
-		
-		string binariesDir	  = Path.Combine(this.ProjectPath, "Binaries", Target.Platform.ToString()) ;
-        string filename		  = Path.GetFileName(Filepath) ;
-		string PlatformString = ( Target.Platform == UnrealTargetPlatform.Win64 ) ? "Win64" : "Win32";
-
-		if (!Directory.Exists(binariesDir))
-		{
-			Directory.CreateDirectory(binariesDir);
-		}
-
-		if ( !File.Exists(Path.Combine(binariesDir, filename)) )
-		{
-			// System.Console.WriteLine("___________######################################_______" + Path.Combine(binariesDir, filename) + "``````````````" + Filepath);
-			File.Copy(Filepath, Path.Combine(binariesDir, filename), true);
-		}
-    }
 }

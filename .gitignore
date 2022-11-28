@@ -14,3 +14,4 @@ Saved/
 *.xcworkspace
 *.exp
 /Plugins/QCorePlugin/.gitignore
+ThirdParty

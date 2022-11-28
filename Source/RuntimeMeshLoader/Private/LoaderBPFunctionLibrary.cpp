@@ -562,6 +562,8 @@ FReturnedData ULoaderBPFunctionLibrary::LoadMesh(const FString& filepath, const 
 		result.bSuccess = true;
 	}
 
+	mImporter.FreeScene();
+
 	return result;
 }
 
@@ -620,11 +622,15 @@ UStaticMesh* ULoaderBPFunctionLibrary::LoadMeshToStaticMesh( UObject* WorldConte
 	UStaticMesh* StaticMesh = NewObject<UStaticMesh>(WorldContextObject, MeshName, RF_Public | RF_Standalone);
 	
 	StaticMesh->InitResources();
-	StaticMesh->LightingGuid = FGuid::NewGuid();
+	StaticMesh->SetLightingGuid(FGuid::NewGuid());
+
+
+	UStaticMesh::FBuildMeshDescriptionsParams MeshDescriptionsParams;
+	MeshDescriptionsParams.bBuildSimpleCollision = true;
 
 	TArray<const FMeshDescription*> arr;
 	arr.Add(&MeshDescription);
-	StaticMesh->BuildFromMeshDescriptions(arr, false);
+	StaticMesh->BuildFromMeshDescriptions(arr, MeshDescriptionsParams);
 	
 	//// MATERIALS
 	TSet<UMaterialInterface*> UniqueMaterials;
@@ -643,13 +649,12 @@ UStaticMesh* ULoaderBPFunctionLibrary::LoadMeshToStaticMesh( UObject* WorldConte
 	{
 		// Material
 		FStaticMaterial&& StaticMat = FStaticMaterial(Material);
-
 		StaticMat.UVChannelData.bInitialized = true;
-		StaticMesh->StaticMaterials.Add(StaticMat);		
+		StaticMesh->GetStaticMaterials().Add(StaticMat);
 
 #pragma region 模拟填充 FMeshSectionInfo
 
-		FStaticMeshRenderData* const RenderData = StaticMesh->RenderData.Get();
+		FStaticMeshRenderData* const RenderData = StaticMesh->GetRenderData();
 
 		int32 LODIndex = 0;
 		int32 MaxLODs = RenderData->LODResources.Num();
@@ -702,13 +707,15 @@ UStaticMesh* ULoaderBPFunctionLibrary::LoadMeshToStaticMeshFromProceduralMesh(UO
 	UStaticMesh* StaticMesh = NewObject<UStaticMesh>(WorldContextObject, MeshName, RF_Public | RF_Standalone);
 
 	StaticMesh->InitResources();
-	StaticMesh->LightingGuid = FGuid::NewGuid();
+	StaticMesh->SetLightingGuid(FGuid::NewGuid());
+
+
+	UStaticMesh::FBuildMeshDescriptionsParams MeshDescriptionsParams;
+	MeshDescriptionsParams.bBuildSimpleCollision = true;
 
 	TArray<const FMeshDescription*> arr;
-
 	arr.Add(&MeshDescription);
-	StaticMesh->BuildFromMeshDescriptions(arr, false);
-
+	StaticMesh->BuildFromMeshDescriptions(arr, MeshDescriptionsParams);
 	//// MATERIALS
 	TSet<UMaterialInterface*> UniqueMaterials;
 
@@ -726,12 +733,12 @@ UStaticMesh* ULoaderBPFunctionLibrary::LoadMeshToStaticMeshFromProceduralMesh(UO
 		FStaticMaterial&& StaticMat = FStaticMaterial(Material);
 
 		StaticMat.UVChannelData.bInitialized = true;
-		StaticMesh->StaticMaterials.Add(StaticMat);
+		StaticMesh->GetStaticMaterials().Add(StaticMat);
 
 	}
 	#pragma region 模拟填充 FMeshSectionInfo
 
-		FStaticMeshRenderData* const RenderData = StaticMesh->RenderData.Get();
+		FStaticMeshRenderData* const RenderData = StaticMesh->GetRenderData();
 
 
 		int32 LODIndex = 0;
@@ -783,11 +790,15 @@ UStaticMesh* ULoaderBPFunctionLibrary::TryNewStaticMesh(UObject* WorldContextObj
 
 	UStaticMesh* StaticMesh = NewObject<UStaticMesh>(WorldContextObject, MeshName, RF_Public | RF_Standalone);
 	StaticMesh->InitResources();
-	StaticMesh->LightingGuid = FGuid::NewGuid();
+	StaticMesh->SetLightingGuid(FGuid::NewGuid());
+
+
+	UStaticMesh::FBuildMeshDescriptionsParams MeshDescriptionsParams;
+	MeshDescriptionsParams.bBuildSimpleCollision = true;
 
 	TArray<const FMeshDescription*> arr;
 	arr.Add(&MeshDescription);
-	StaticMesh->BuildFromMeshDescriptions(arr, false);
+	StaticMesh->BuildFromMeshDescriptions(arr, MeshDescriptionsParams);
 
 	return StaticMesh;
 }

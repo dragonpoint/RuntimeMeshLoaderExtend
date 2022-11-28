@@ -11,6 +11,7 @@ void FRuntimeMeshLoaderModule::StartupModule()
 	// This code will execute after your module is loaded into memory; the exact timing is specified in the .uplugin file per-module
 	
 	//FPlatformProcess::AddDllDirectory();
+	/*
 	const FString PluginDir = IPluginManager::Get().FindPlugin(TEXT("RuntimeMeshLoader"))->GetBaseDir();
 
 	const FString AssimpBinPath = PluginDir / TEXT ( PREPROCESSOR_TO_STRING(ThirdParty/assimp/Win64/Debug)	);
@@ -21,6 +22,7 @@ void FRuntimeMeshLoaderModule::StartupModule()
 	this->AssimpDllHandle = FPlatformProcess::GetDllHandle(*DLLPath);
 	
 	FPlatformProcess::PopDllDirectory(*AssimpBinPath);
+	*/
 }
 
 void FRuntimeMeshLoaderModule::ShutdownModule()
@@ -28,10 +30,12 @@ void FRuntimeMeshLoaderModule::ShutdownModule()
 	// This function may be called during shutdown to clean up your module.  For modules that support dynamic reloading,
 	// we call this function before unloading the module.
 	
+	/*
 	if(this->AssimpDllHandle)
 	{
 		FPlatformProcess::FreeDllHandle(this->AssimpDllHandle);
 	}
+	*/
 	
 }
 
