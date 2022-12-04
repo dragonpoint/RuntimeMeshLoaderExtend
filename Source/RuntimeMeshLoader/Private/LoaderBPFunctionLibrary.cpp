@@ -446,13 +446,16 @@ FMeshDescription BuildMeshDescriptionExtend( FReturnedData& MeshsData /* UProced
 			IndiceIndexToVertexInstanceID.Add(IndiceIndex, VertexInstanceID);
 
 			FVector ProcVertex = MeshInfo.Vertices[VertexIndex];		// FProcMeshVertex& ProcVertex = ProcSection->ProcVertexBuffer[VertexIndex];
-			FProcMeshTangent VertexTanents = MeshInfo.Tangents[VertexIndex];
-			
 			FLinearColor VertexColor = MeshInfo.VertexColors.Num() > VertexIndex ? MeshInfo.VertexColors[VertexIndex] : FLinearColor(1.0, 0.0, 0.0);
-
-			Tangents[VertexInstanceID] = VertexTanents.TangentX;		// ProcVertex.Tangent.TangentX;
 			Normals[VertexInstanceID] = MeshInfo.Normals[VertexIndex];	// ProcVertex.Normal;
-			BinormalSigns[VertexInstanceID] = VertexTanents.bFlipTangentY ? -1.f : 1.f;
+
+			if (MeshInfo.Tangents.Num() > 0)
+			{
+				FProcMeshTangent VertexTanents = MeshInfo.Tangents[VertexIndex];
+				Tangents[VertexInstanceID] = VertexTanents.TangentX;		// ProcVertex.Tangent.TangentX;
+				BinormalSigns[VertexInstanceID] = VertexTanents.bFlipTangentY ? -1.f : 1.f;
+			}
+
 
 			Colors[VertexInstanceID] = VertexColor; //FLinearColor(ProcVertex.Color);
 			
@@ -737,35 +740,31 @@ UStaticMesh* ULoaderBPFunctionLibrary::LoadMeshToStaticMeshFromProceduralMesh(UO
 
 	}
 	#pragma region 模拟填充 FMeshSectionInfo
+	FStaticMeshRenderData* const RenderData = StaticMesh->GetRenderData();
+	int32 LODIndex = 0;
+	int32 MaxLODs = RenderData->LODResources.Num();
+	for (int32 MaterialID = 0; LODIndex < MaxLODs; ++LODIndex)
+	{
+		FStaticMeshLODResources& LOD = RenderData->LODResources[LODIndex];
 
-		FStaticMeshRenderData* const RenderData = StaticMesh->GetRenderData();
-
-
-		int32 LODIndex = 0;
-		int32 MaxLODs = RenderData->LODResources.Num();
-		for (int32 MaterialID = 0; LODIndex < MaxLODs; ++LODIndex)
+		for (int32 SectionIndex = 0; SectionIndex < LOD.Sections.Num(); ++SectionIndex)
 		{
-			FStaticMeshLODResources& LOD = RenderData->LODResources[LODIndex];
-
-			for (int32 SectionIndex = 0; SectionIndex < LOD.Sections.Num(); ++SectionIndex)
-			{
-				FStaticMeshSection& Section = LOD.Sections[SectionIndex];
-				Section.MaterialIndex = MaterialID;
-				Section.bEnableCollision = true;
-				Section.bCastShadow = true;
-				Section.bForceOpaque = false;
-				MaterialID++;
-			}
+			FStaticMeshSection& Section = LOD.Sections[SectionIndex];
+			Section.MaterialIndex = MaterialID;
+			Section.bEnableCollision = true;
+			Section.bCastShadow = true;
+			Section.bForceOpaque = false;
+			MaterialID++;
 		}
-
+	}
 	#pragma endregion 
 
-
-	
-
 	#pragma endregion material test
-	
-	//StaticMesh->Build(false);
+
+#if WITH_EDITOR	
+	//StaticMesh->Build(true);
+#endif
+
 	return StaticMesh;
 }
 
@@ -796,9 +795,11 @@ UStaticMesh* ULoaderBPFunctionLibrary::TryNewStaticMesh(UObject* WorldContextObj
 	UStaticMesh::FBuildMeshDescriptionsParams MeshDescriptionsParams;
 	MeshDescriptionsParams.bBuildSimpleCollision = true;
 
+
 	TArray<const FMeshDescription*> arr;
 	arr.Add(&MeshDescription);
 	StaticMesh->BuildFromMeshDescriptions(arr, MeshDescriptionsParams);
+
 
 	return StaticMesh;
 }

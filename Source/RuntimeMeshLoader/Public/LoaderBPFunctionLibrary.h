@@ -22,35 +22,35 @@ struct FMeshInfo
 	GENERATED_USTRUCT_BODY()
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "ReturnedData")
-		TArray<FVector> Vertices;
+	TArray<FVector> Vertices;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "ReturnedData")
-		/** Vertices index */
-		TArray<int32> Triangles;
+	/** Vertices index */
+	TArray<int32> Triangles;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "ReturnedData")
-		TArray<FVector> Normals;
+	TArray<FVector> Normals;
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "ReturnedData")
-		TArray<FVector2D> UV0;
+	TArray<FVector2D> UV0;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "ReturnedData")
-		TArray<FVector2D> UV1;
+	TArray<FVector2D> UV1;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "ReturnedData")
-		TArray<FVector2D> UV2;
+	TArray<FVector2D> UV2;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "ReturnedData")
-		TArray<FVector2D> UV3;
+	TArray<FVector2D> UV3;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "ReturnedData")
-		TArray<FLinearColor> VertexColors;
+	TArray<FLinearColor> VertexColors;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "ReturnedData")
-		TArray<FProcMeshTangent> Tangents;
+	TArray<FProcMeshTangent> Tangents;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "ReturnedData")
-		FTransform RelativeTransform;
+	FTransform RelativeTransform;
 };
 
 USTRUCT(BlueprintType)
@@ -60,15 +60,13 @@ struct FReturnedData
 
 public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "ReturnedData")
-		/**/
-		bool bSuccess;
-
-	/** Contain Mesh Count  */
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "ReturnedData")
-		int32 NumMeshes;
+	bool bSuccess;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "ReturnedData")
-		TArray<FMeshInfo> meshInfo;
+	int32 NumMeshes;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "ReturnedData")
+	TArray<FMeshInfo> meshInfo;
 };
 
 

@@ -5,32 +5,16 @@ using System.IO;
 
 public class RuntimeMeshLoader : ModuleRules
 {
-
-	/**
-	 * 
-	 **/
     private string ModulePath
     {
         get { return ModuleDirectory; }
     }
 
-	/**
-	 * 
-	 **/
     private string ThirdPartyPath
     {
         get { return Path.GetFullPath(Path.Combine(ModulePath, "../../ThirdParty/")); }
     }
 
-	/**
-	 * 
-	 **/
-    private string ProjectPath
-    {
-        // Change this according to your module's relative location to your project file. If there is any better way to do this I'm interested!
-        // Assuming Source/ThirdParty/YourLib/
-        get { return Directory.GetParent(ModuleDirectory).Parent.Parent.ToString(); }
-	}
 
     public RuntimeMeshLoader(ReadOnlyTargetRules Target) : base(Target)
 	{
