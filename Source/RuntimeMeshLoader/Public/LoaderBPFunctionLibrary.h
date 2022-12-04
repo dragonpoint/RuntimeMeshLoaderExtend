@@ -10,14 +10,14 @@ class UProceduralMeshComponent;
 class UStaticMesh;
 
 UENUM(BlueprintType)
-enum class EPathType : uint8
+enum class  EPathType : uint8
 {
 	Absolute UMETA(DisplayName = "Absolute"),
 	Relative UMETA(DisplayName = "Relative")
 };
 
 USTRUCT(BlueprintType)
-struct FMeshInfo
+struct RUNTIMEMESHLOADER_API FMeshInfo
 {
 	GENERATED_USTRUCT_BODY()
 	
@@ -54,7 +54,7 @@ struct FMeshInfo
 };
 
 USTRUCT(BlueprintType)
-struct FReturnedData
+struct RUNTIMEMESHLOADER_API FReturnedData
 {
 	GENERATED_USTRUCT_BODY()
 
